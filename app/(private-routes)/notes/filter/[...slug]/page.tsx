@@ -1,4 +1,4 @@
-import { fetchNotes } from "@/lib/api";
+import { fetchNotes } from "@/lib/api/clientApi";
 import AppPage from "./Notes.client";
 import { Metadata } from "next";
 
