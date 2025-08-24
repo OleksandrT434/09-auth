@@ -4,11 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import css from './ProfilePage.module.css';
 import { useAuthStore } from '@/lib/store/authStore';
-import { logout } from '@/lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
-  const router = useRouter();
   const { user } = useAuthStore();
   if (!user) return <p>Loading...</p>;
 
