@@ -26,7 +26,15 @@ export const login = async (data: LoginRequest) => {
   const res = await nextServer.post<User>('/auth/login', data);
   return res.data;
 };
+export async function getMe(): Promise<User> {
+  const res = await nextServer.get<User>('/users/me');
+  return res.data;
+}
 
+export async function updateMe(data: Partial<Pick<User, 'userName'>>): Promise<User> {
+  const res = await nextServer.patch<User>('/users/me', data);
+  return res.data;
+}
 
 export const logout = async (): Promise<void> => {
   await nextServer.post('/auth/logout')
