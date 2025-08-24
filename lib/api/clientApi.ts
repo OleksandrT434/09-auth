@@ -39,9 +39,13 @@ export async function updateMe(data: Partial<Pick<User, 'userName'>>): Promise<U
 export const logout = async (): Promise<void> => {
   await nextServer.post('/auth/logout')
 };
-export const checkSession = async () => {
-  const res = await nextServer.get<User>('/auth/session');
-  return res.data;
+export const checkSession = async (): Promise<boolean> => {
+  try {
+    await nextServer.get('/auth/session');
+    return true;
+  } catch {
+    return false;
+  }
 };
 
 export async function fetchNotes(page: number = 1, perPage: number = 12, search: string, sortBy?: 'created' | 'updated', tag?:string): Promise<PaginatedNotes> {

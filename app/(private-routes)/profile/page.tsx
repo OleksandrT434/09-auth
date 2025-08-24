@@ -9,12 +9,8 @@ import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, clearIsAuthenticated } = useAuthStore();
+  const { user } = useAuthStore();
   if (!user) return <p>Loading...</p>;
-
-  async function handleLogout() {
-    try { await logout(); } finally { clearIsAuthenticated(); router.push('/sign-in'); }
-  }
 
   return (
     <main className={css.mainContent}>
@@ -31,10 +27,6 @@ export default function ProfilePage() {
         <div className={css.profileInfo}>
           <p>Username: {user.userName}</p>
           <p>Email: {user.email}</p>
-        </div>
-
-        <div className={css.actions}>
-          <button onClick={handleLogout} className={css.logoutButton}>Logout</button>
         </div>
       </div>
     </main>
