@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getMe } from '@/lib/api/clientApi';
+import { getUserInfo } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -12,7 +12,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     (async () => {
       try {
-        const user = await getMe(); 
+        const user = await getUserInfo(); 
         setAuth(user);
       } catch {
         clearAuth();

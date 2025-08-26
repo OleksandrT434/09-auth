@@ -2,7 +2,7 @@
 import css from './SignUpPage.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { register, type RegisterRequest } from '@/lib/api/clientApi';
+import { registerUser, type UserRequest } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 
 
@@ -15,11 +15,11 @@ const SignUp = () => {
    async function handleSubmit(formData: FormData) {
     setError('');
     try {
-      const data: RegisterRequest = {
+      const data: UserRequest = {
         email: String(formData.get('email') ?? ''),
         password: String(formData.get('password') ?? ''),
       };
-      const res = await register(data);
+      const res = await registerUser(data);
 
       if (res) {
         setUser(res);
@@ -51,8 +51,7 @@ const SignUp = () => {
               Register
             </button>
           </div>
-          {error &&
-            <p className={css.error}>Error</p>
+          {error && <p className={css.error}>Error</p>
           }
         </form>
       </main>

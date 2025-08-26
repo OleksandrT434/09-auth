@@ -3,7 +3,7 @@
 import css from './SignInPage.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, type LoginRequest } from '@/lib/api/clientApi';
+import { loginUser, type UserRequest } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function SignIn() {
@@ -14,8 +14,8 @@ export default function SignIn() {
   async function handleSubmit(formData: FormData) {
     setError('');
     try {
-      const formValues = Object.fromEntries(formData) as LoginRequest;
-      const user = await login(formValues); 
+      const formValues = Object.fromEntries(formData) as UserRequest;
+      const user = await loginUser(formValues); 
       setUser(user);               
       router.push('/profile');             
     } catch (e: any) {

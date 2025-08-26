@@ -1,12 +1,18 @@
-import { cookies } from 'next/headers';
-import { nextServer } from './api';
+import { cookies } from "next/headers";
+import axios from "axios";
+import  getBaseUrl  from "./api";
+import type { UserMe} from "@/types/user";
 
-export const checkServerSession = async () => {
+
+export default async function userInfoServer(): Promise<UserMe> {
   const cookieStore = await cookies();
-  const res = await nextServer.get('/auth/session', {
+  const cookieHeader = cookieStore.getAll().map((c) => `${c.name}=${c.value}`);
+  const res = await axios.get<UserMe>(`${getBaseUrl()}/api/users/me`, {
     headers: {
-      Cookie: cookieStore.toString(),
+      Cookie: cookieHeader, 
     },
+    withCredentials: true,
   });
-  return res;
-};
+
+  return res.data;
+}

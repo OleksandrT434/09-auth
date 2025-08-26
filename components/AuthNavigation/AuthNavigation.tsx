@@ -3,7 +3,7 @@
 import css from './AuthNavigation.module.css';
 import Link from 'next/link';
 import { useAuthStore } from '../../lib/store/authStore';
-import { logout } from '../../lib/api/clientApi';
+import { logoutUser } from '../../lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 
 
@@ -14,7 +14,7 @@ const AuthNavigation = () => {
   const router = useRouter();
   const handleLogout = async () => {
     try {
-      await logout();
+      await logoutUser();
     } catch {
 
     } finally {

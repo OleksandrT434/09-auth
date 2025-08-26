@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import css from './EditProfilePage.module.css';
+import css from "./EditProfilePage.module.css"
 import { useAuthStore } from '@/lib/store/authStore';
-import { updateMe } from '@/lib/api/clientApi';
-import type { User } from '@/types/user';
+import Image from 'next/image';
+import { updateUser } from '@/lib/api/clientApi';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import {User} from '@/types/user'
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -18,17 +18,23 @@ export default function EditProfilePage() {
   async function handleEdit(formData: FormData) {
     setError('');
     try {
-      const userName = String(formData.get('userName') ?? '').trim();
-      if (!userName) return;
-      const updated: User = await updateMe({ userName });
+
+      const username = String(formData.get('username') ?? '').trim();
+      if (!username || username === user?.username) {
+        router.push('/profile');
+        return;
+      }
+      const updated: User = await updateUser({ username }); 
       setUser(updated);
-      router.push('/profile');
+      router.replace('/profile');
+      router.refresh();
     } catch (e: any) {
-      setError(e?.message ?? 'Failed to update profile');
+      setError(e?.response?.data?.error ?? e?.message ?? 'Failed to update profile');
     }
   }
 
-  return (
+
+   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <h1 className={css.formTitle}>Edit Profile</h1>
@@ -43,12 +49,12 @@ export default function EditProfilePage() {
 
         <form action={handleEdit} className={css.profileInfo}>
           <div className={css.usernameWrapper}>
-            <label htmlFor="userName">Username:</label>
+             <label htmlFor="username">Username: {user?.username}</label>
             <input
-              id="userName"
-              name="userName"
+              id="username"
+              name="username"  
               type="text"
-              defaultValue={user.userName}
+              defaultValue={user.username} 
               className={css.input}
             />
           </div>

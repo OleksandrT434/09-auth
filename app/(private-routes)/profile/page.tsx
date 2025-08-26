@@ -1,37 +1,44 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import css from './ProfilePage.module.css';
-import { useAuthStore } from '@/lib/store/authStore';
-import { useRouter } from 'next/navigation';
+import  userInfoServer  from "@/lib/api/serverApi"
+import { Metadata } from 'next';
 
-export default function ProfilePage() {
-  const { user } = useAuthStore();
-  if (!user) return <p>Loading...</p>;
+const PageProfile = async () => {
+  const user = await userInfoServer();
 
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <div className={css.header}>
           <h1 className={css.formTitle}>Profile Page</h1>
-          <Link href="/profile/edit" className={css.editProfileButton}>Edit Profile</Link>
+          <Link href="/profile/edit" className={css.editProfileButton}>
+            Edit Profile
+          </Link>
         </div>
 
         <div className={css.avatarWrapper}>
-          <Image src={user.photoUrl ?? '/default-avatar.png'} alt="User Avatar" width={120} height={120} className={css.avatar}/>
+          <Image
+            src={user.photoUrl ?? "/default-avatar.png"}
+            alt="User Avatar"
+            width={120}
+            height={120}
+            className={css.avatar}
+          />
         </div>
 
         <div className={css.profileInfo}>
-          <p>Username: {user.userName}</p>
+          <p>Username: {user?.username}</p>
           <p>Email: {user.email}</p>
         </div>
       </div>
     </main>
   );
-}
+};
 
-/* 
+export default PageProfile;
+
+
 export const metadata: Metadata = {
         title: 'Profile - NoteHub',
         description: 'Manage your profile on NoteHub',
@@ -49,4 +56,4 @@ export const metadata: Metadata = {
             ]
         },
     }
- */
+ 

@@ -1,8 +1,10 @@
 export type User = {
   id: string;
   email: string;
-  userName: string;
+  username: string;
   photoUrl?: string;
-  createdAt: string;
-  updatedAt: string;
 };
+export type CheckSession = {
+  success: boolean;
+};
+
