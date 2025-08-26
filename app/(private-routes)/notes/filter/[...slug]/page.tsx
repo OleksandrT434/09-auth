@@ -3,18 +3,14 @@ import AppPage from "./Notes.client";
 import { Metadata } from "next";
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: { slug: string[] };
 };
 
 const NotesByFilter = async ({ params }: Props) => {
-  const { slug } = await params; 
-  const tag = slug?.[0];
-
-  const response = await fetchNotes(1, 12, '', undefined, tag === "All" ? undefined : tag);
-
+  const tag = params.slug?.[0] ?? 'All';
   return (
     <div>
-      <AppPage tag={tag} initialData={response} />
+      <AppPage tag={tag}  />
     </div>
   );
 };

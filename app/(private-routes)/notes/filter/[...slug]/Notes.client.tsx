@@ -17,7 +17,7 @@ interface PaginatedNotes {
   totalPages: number;
 }
 type AppPageProps = {
-  initialData: PaginatedNotes;
+  initialData?: PaginatedNotes;
   tag: string; 
 };
 
