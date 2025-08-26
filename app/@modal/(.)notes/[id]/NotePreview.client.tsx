@@ -5,7 +5,7 @@ import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import Modal from "@/components/Modal/Modal";
 import css from '../NotePreview.module.css';
-import { fetchNoteById } from "@/lib/api/api";
+import { fetchNoteById } from "@/lib/api/clientApi";
 import { useQuery } from "@tanstack/react-query";
 import { Note } from "@/types/note";
 
@@ -55,7 +55,7 @@ export default function NotePreview() {
           <p className={css.content}>{note.content}</p>
           <p className={css.date}>{note.updatedAt ?? note.createdAt}</p>
         </div>
-        {note.tag && <p className={css.tag}>{note.tag}</p>}
+        {note.tags && <p className={css.tag}>{note.tags}</p>}
     </div>
   </Modal>
   );
