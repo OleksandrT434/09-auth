@@ -4,8 +4,9 @@ export type Note = {
   content: string;
   createdAt: string;
   updatedAt: string;
-  tags?: string[];
+  tag: Tag
 };
+export type Tag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 
 export type NewNoteData = {
   title: string;
