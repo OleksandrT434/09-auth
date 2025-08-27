@@ -28,8 +28,12 @@ export default function EditProfilePage() {
       setUser(updated);
       router.replace('/profile');
       router.refresh();
-    } catch (e: any) {
-      setError(e?.response?.data?.error ?? e?.message ?? 'Failed to update profile');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to update profile');
+      }
     }
   }
 
