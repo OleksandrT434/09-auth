@@ -6,19 +6,34 @@ import { registerUser, type UserRequest } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
 
 
+function getErrorMessage(err: unknown): string {
+  if (typeof err === 'object' && err !== null) {
+    const maybeAxios = err as {
+      response?: { data?: { error?: unknown } };
+      message?: unknown;
+    };
+    const apiMessage = maybeAxios.response?.data?.error;
+    if (typeof apiMessage === 'string' && apiMessage.trim()) return apiMessage;
+
+    const genericMessage = maybeAxios.message;
+    if (typeof genericMessage === 'string' && genericMessage.trim()) return genericMessage;
+  }
+  return 'Oops... some error';
+}
+
 const SignUp = () => {
   const router = useRouter();
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string>('');
   const setUser = useAuthStore((s) => s.setUser);
 
-
-   async function handleSubmit(formData: FormData) {
+  async function handleSubmit(formData: FormData): Promise<void> {
     setError('');
     try {
       const data: UserRequest = {
         email: String(formData.get('email') ?? ''),
         password: String(formData.get('password') ?? ''),
       };
+
       const res = await registerUser(data);
 
       if (res) {
@@ -27,10 +42,11 @@ const SignUp = () => {
       } else {
         setError('Registration failed');
       }
-    } catch (e: any) {
-      setError(e?.response?.data?.error ?? e?.message ?? 'Oops... some error');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     }
   }
+
   
     return (
       <main className={css.mainContent}>
