@@ -55,7 +55,7 @@ export default function NotePreview() {
           <p className={css.content}>{note.content}</p>
           <p className={css.date}>{note.updatedAt ?? note.createdAt}</p>
         </div>
-        {note.tags && <p className={css.tag}>{note.tags}</p>}
+        {note.tag && <p className={css.tag}>{note.tag}</p>}
     </div>
   </Modal>
   );
