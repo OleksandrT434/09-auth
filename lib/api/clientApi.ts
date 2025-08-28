@@ -1,5 +1,5 @@
 import { nextServer } from './api';
-import type { Note, NewNoteData, FetchNotesResponse, Params } from '@/types/note';
+import type { Note, NewNoteData, FetchNotesResponse } from '@/types/note';
 import type { User } from '@/types/user';
 
 export type UserRequest = {
@@ -7,25 +7,37 @@ export type UserRequest = {
   password: string;
 };
 
+type Params = {
+  page: number;
+  perPage: number;
+  search?: string;
+  sortBy?: 'created' | 'updated';
+  tag?: string;
+};
 
+// ---- AUTH ----
 export const registerUser = async (user: UserRequest): Promise<User> => {
   const { data } = await nextServer.post<User>('/auth/register', user);
   return data;
 };
-
 
 export const loginUser = async (user: UserRequest): Promise<User> => {
   const { data } = await nextServer.post<User>('/auth/login', user);
   return data;
 };
 
-export const logoutUser = async ()=> {
-  const { data } = await nextServer.post('/auth/logout');
-  return data.success;
+export const logoutUser = async (): Promise<boolean> => {
+  const { data } = await nextServer.post<{ success: boolean }>('/auth/logout');
+  return Boolean(data?.success);
 };
 
-export const checkSessionClient = async (): Promise<User> => {
-  const { data } = await nextServer.get<User>('/auth/session');
+export type SessionResponse = {
+  authenticated: boolean;
+  user: User | null;
+};
+
+export const checkSessionClient = async (): Promise<SessionResponse> => {
+  const { data } = await nextServer.get<SessionResponse>('/auth/session');
   return data;
 };
 
@@ -34,13 +46,14 @@ export const getUserInfo = async (): Promise<User> => {
   return data;
 };
 
-
-export async function updateUser(data: Partial<Pick<User, 'username'>>): Promise<User> {
+export async function updateUser(
+  data: Partial<Pick<User, 'username'>>
+): Promise<User> {
   const res = await nextServer.patch<User>('/users/me', data);
   return res.data;
 }
 
-//----------NOTES ----------//
+// ---- NOTES ----
 export async function fetchNotes(
   page: number = 1,
   perPage: number = 12,
@@ -50,15 +63,9 @@ export async function fetchNotes(
 ): Promise<FetchNotesResponse> {
   const params: Params = { page, perPage };
 
-  if (searchValue.trim()) {
-    params.search = searchValue.trim();
-  }
-  if (sortBy) {
-    params.sortBy = sortBy;
-  }
-  if (tag && tag !== 'All') {
-    params.tag = tag;
-  }
+  if (searchValue.trim()) params.search = searchValue.trim();
+  if (sortBy) params.sortBy = sortBy;
+  if (tag && tag !== 'All') params.tag = tag;
 
   const { data } = await nextServer.get<FetchNotesResponse>('/notes', { params });
   return data;
@@ -66,12 +73,6 @@ export async function fetchNotes(
 
 export const createNote = async (noteData: NewNoteData): Promise<Note> => {
   const { data } = await nextServer.post<Note>('/notes', noteData);
-  return data;
-};
-
-
-export const updateNote = async (id: string, noteData: Partial<NewNoteData>): Promise<Note> => {
-  const { data } = await nextServer.patch<Note>(`/notes/${id}`, noteData);
   return data;
 };
 

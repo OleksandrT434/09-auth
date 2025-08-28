@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import css from './ProfilePage.module.css';
-import  userInfoServer  from "@/lib/api/serverApi"
+import {getCurrentUserServer}  from "@/lib/api/serverApi"
 import { Metadata } from 'next';
 
 const PageProfile = async () => {
-  const user = await userInfoServer();
+  const user = await getCurrentUserServer();
 
   return (
     <main className={css.mainContent}>
@@ -19,7 +19,7 @@ const PageProfile = async () => {
 
         <div className={css.avatarWrapper}>
           <Image
-            src={user.photoUrl ?? "/default-avatar.png"}
+            src={user.avatar ?? "/default-avatar.png"}
             alt="User Avatar"
             width={120}
             height={120}

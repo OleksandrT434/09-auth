@@ -44,7 +44,7 @@ export default function EditProfilePage() {
         <h1 className={css.formTitle}>Edit Profile</h1>
 
         <Image
-          src={user.photoUrl ?? '/default-avatar.png'}
+          src={user.avatar ?? '/default-avatar.png'}
           alt="User Avatar"
           width={120}
           height={120}

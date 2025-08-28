@@ -1,10 +1,5 @@
 export type User = {
-  id: string;
   email: string;
   username: string;
-  photoUrl?: string;
+  avatar: string; 
 };
-export type CheckSession = {
-  success: boolean;
-};
-

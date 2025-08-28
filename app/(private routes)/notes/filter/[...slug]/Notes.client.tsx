@@ -65,11 +65,9 @@ export default function AppPage( { initialData, tag }: AppPageProps) {
         + Create note
       </Link>
         </header>
-
-        {notes.length === 0 && <p>No notes found.</p>}
+        
         {notes.length > 0 && (
         <>
-         
           {totalPages > 1 && (
             <Pagination
               currentPage={page}

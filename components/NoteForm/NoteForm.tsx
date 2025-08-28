@@ -17,6 +17,7 @@ interface NewNoteData {
 export default function NoteForm() {
   const {draft, setDraft, clearDraft } = useNoteDraft()
   const queryClient = useQueryClient();
+  const router = useRouter(); 
   const mutation = useMutation({
     mutationFn: (noteData: NewNoteData) => createNote(noteData),
     onSuccess: () => {
@@ -26,7 +27,7 @@ export default function NoteForm() {
     },
   });
   
-  const router = useRouter(); 
+
 
   async function handleSubmit(formData: FormData) {
     const noteData: NewNoteData = {
