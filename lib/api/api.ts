@@ -1,6 +1,10 @@
+
 import axios from "axios";
 
+const base =
+  (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "") + "/api";
+
 export const nextServer = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL + "/api",
+  baseURL: base,
   withCredentials: true,
 });

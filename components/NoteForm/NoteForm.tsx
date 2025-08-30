@@ -12,8 +12,6 @@ interface NewNoteData {
   tag: string;
 }
 
-
-
 export default function NoteForm() {
   const {draft, setDraft, clearDraft } = useNoteDraft()
   const queryClient = useQueryClient();
