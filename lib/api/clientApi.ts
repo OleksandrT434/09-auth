@@ -47,12 +47,13 @@ export const logout = async (): Promise<void> => {
   await nextServer.post("/auth/logout");
 };
 
-type CheckSessionResponse = { success: boolean };
 
-export const checkSession = async (): Promise<boolean> => {
-  const res = await nextServer.get<CheckSessionResponse>("/auth/session");
-  return res.data.success;
+export const checkSession = async (): Promise<User | null> => {
+  const res = await nextServer.get<User | "">("/auth/session");
+  if (!res.data || typeof res.data !== "object") return null;
+  return res.data as User;
 };
+
 
 export const fetchNotes = async (
   search: string,
