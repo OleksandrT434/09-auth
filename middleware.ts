@@ -26,15 +26,24 @@ export async function middleware(req: NextRequest) {
     const { data: refreshed } = await refreshSessionServer(refreshToken);
 
     if (refreshed?.accessToken) {
-      const res = isPublic
-        ? NextResponse.redirect(new URL('/', req.url))
-        : NextResponse.next();
-      res.cookies.set('accessToken', refreshed.accessToken, { httpOnly: true, secure: true });
-      if (refreshed.refreshToken) {
-        res.cookies.set('refreshToken', refreshed.refreshToken, { httpOnly: true, secure: true });
-      }
-      return res;
-    }
+  const res = isPublic
+    ? NextResponse.redirect(new URL('/', req.url))
+    : NextResponse.next();
+
+  const opts = {
+    httpOnly: true as const,
+    secure: true as const,
+    sameSite: 'lax' as const,
+    path: '/' as const, 
+  };
+
+  res.cookies.set('accessToken', refreshed.accessToken, opts);
+  if (refreshed.refreshToken) {
+    res.cookies.set('refreshToken', refreshed.refreshToken, opts);
+  }
+  return res;
+}
+
     const fail = NextResponse.redirect(new URL('/sign-in', req.url));
     fail.cookies.delete('accessToken');
     fail.cookies.delete('refreshToken');
