@@ -6,6 +6,10 @@ export type AuthResponse = {
   refreshToken: string;
 };
 
+export type SessionResponse = {
+  authenticated: boolean;
+  user: User | null;
+};
 
 export type RefreshResult = {
   accessToken: string;
