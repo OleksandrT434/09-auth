@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { checkSessionClient, getUserInfo } from '@/lib/api/clientApi'
 import { useAuthStore } from '@/lib/store/authStore';
 
+
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const setAuth = useAuthStore((s) => s.setUser);
   const clearAuth = useAuthStore((s) => s.clearIsAuthenticated);

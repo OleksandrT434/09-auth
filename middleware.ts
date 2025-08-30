@@ -11,29 +11,31 @@ export const config = {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const isPublic  = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
+  const isPrivate = PRIVATE_ROUTES.some((r) => pathname.startsWith(r));
 
   const store = await headerCookies();
-  const accessToken = store.get('accessToken')?.value;
+  const accessToken  = store.get('accessToken')?.value;
   const refreshToken = store.get('refreshToken')?.value;
-
-  const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
-  const isPrivate = PRIVATE_ROUTES.some((r) => pathname.startsWith(r));
 
   if (accessToken && isPublic) {
     return NextResponse.redirect(new URL('/', req.url));
   }
   if (!accessToken && refreshToken) {
-    const { data: refreshed } = await refreshSessionServer(refreshToken);
-
-    if (refreshed?.accessToken) {
-      const res = isPublic
-        ? NextResponse.redirect(new URL('/', req.url))
-        : NextResponse.next();
-      res.cookies.set('accessToken', refreshed.accessToken, { httpOnly: true, secure: true });
-      if (refreshed.refreshToken) {
-        res.cookies.set('refreshToken', refreshed.refreshToken, { httpOnly: true, secure: true });
+    try {
+      const { data: refreshed } = await refreshSessionServer(refreshToken);
+      if (refreshed?.accessToken) {
+        const res = isPublic
+          ? NextResponse.redirect(new URL('/', req.url))
+          : NextResponse.next();
+        const opts = { httpOnly: true as const, secure: true as const, sameSite: 'lax' as const, path: '/' as const };
+        res.cookies.set('accessToken', refreshed.accessToken, opts);
+        if (refreshed.refreshToken) {
+          res.cookies.set('refreshToken', refreshed.refreshToken, opts);
+        }
+        return res;
       }
-      return res;
+    } catch {
     }
     const fail = NextResponse.redirect(new URL('/sign-in', req.url));
     fail.cookies.delete('accessToken');

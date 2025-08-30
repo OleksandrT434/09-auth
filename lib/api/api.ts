@@ -18,6 +18,6 @@ export default function getBaseUrl(): string {
   throw new Error('❌ Base URL is not defined in environment variables');
 }
 export const nextServer = axios.create({
-  baseURL: getBaseUrl(),
+  baseURL: getBaseUrl() + '/api',
   withCredentials: true,
 });
