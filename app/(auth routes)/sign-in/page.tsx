@@ -34,6 +34,8 @@ export default function SignIn() {
       const user = await loginUser(formValues);
       setUser(user);
       router.push('/profile');
+      router.refresh();
+      
     } catch (err: unknown) {
       setError(getErrorMessage(err));
     }
