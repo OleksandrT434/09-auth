@@ -46,9 +46,7 @@ export const getUserInfo = async (): Promise<User> => {
   return data;
 };
 
-export async function updateUser(
-  data: Partial<Pick<User, 'username'>>
-): Promise<User> {
+export async function updateUser(data: Partial<Pick<User, 'username'>>): Promise<User> {
   const res = await nextServer.patch<User>('/users/me', data);
   return res.data;
 }
