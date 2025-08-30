@@ -82,7 +82,7 @@ export const deleteNote = async (id: string): Promise<Note> => {
   return response.data;
 };
 
-export const fetchNoteById = async (id: string): Promise<Note> => {
-  const response = await nextServer.get<Note>(`/notes/${id}`);
+export async function fetchNoteById (id: string | number): Promise<Note> {
+  const response = await nextServer.get(`/notes/${id}`);
   return response.data;
 };
