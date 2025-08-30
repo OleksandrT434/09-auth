@@ -22,11 +22,8 @@ export const registerUser = async (user: UserRequest): Promise<User> => {
 };
 
 export const loginUser = async (user: UserRequest): Promise<User> => {
-  console.log('👉 API baseURL =', nextServer.defaults.baseURL);
-
   const { data } = await nextServer.post<User>('/auth/login', user);
   return data;
-  
 };
 
 export const logoutUser = async (): Promise<boolean> => {
