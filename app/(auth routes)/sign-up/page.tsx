@@ -2,24 +2,9 @@
 import css from './SignUpPage.module.css';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { registerUser, type UserRequest } from '@/lib/api/clientApi';
+import { registration } from '@/lib/api/clientApi';
 import { useAuthStore } from '@/lib/store/authStore';
-
-
-function getErrorMessage(err: unknown): string {
-  if (typeof err === 'object' && err !== null) {
-    const maybeAxios = err as {
-      response?: { data?: { error?: unknown } };
-      message?: unknown;
-    };
-    const apiMessage = maybeAxios.response?.data?.error;
-    if (typeof apiMessage === 'string' && apiMessage.trim()) return apiMessage;
-
-    const genericMessage = maybeAxios.message;
-    if (typeof genericMessage === 'string' && genericMessage.trim()) return genericMessage;
-  }
-  return 'Oops... some error';
-}
+import { UserRequest } from '@/types/user';
 
 const SignUp = () => {
   const router = useRouter();
@@ -34,7 +19,7 @@ const SignUp = () => {
         password: String(formData.get('password') ?? ''),
       };
 
-      const res = await registerUser(data);
+      const res = await registration(data);
 
       if (res) {
         setUser(res);
@@ -43,7 +28,6 @@ const SignUp = () => {
         setError('Registration failed');
       }
     } catch (err: unknown) {
-      setError(getErrorMessage(err));
     }
   }
 

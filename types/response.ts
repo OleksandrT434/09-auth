@@ -1,11 +1,7 @@
-import type { User } from './user';
+import { AxiosError } from "axios";
 
-export type SessionResponse = {
-  authenticated: boolean;
-  user: User | null;
+export type CheckSession = {
+  success: boolean;
 };
 
-export type RefreshResult = {
-  accessToken: string;
-  refreshToken?: string;
-};
+export type ApiError = AxiosError<{ error: string }>

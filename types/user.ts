@@ -3,3 +3,7 @@ export type User = {
   username: string;
   avatar: string; 
 };
+export type UserRequest = {
+  email: string;
+  password: string;
+};

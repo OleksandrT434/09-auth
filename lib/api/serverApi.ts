@@ -1,49 +1,62 @@
-import { cookies } from 'next/headers';
+import { User } from '@/types/user';
 import { nextServer } from './api';
-import type { User } from '@/types/user';
-import type { Note } from '@/types/note';
-import type { RefreshResult, SessionResponse } from '@/types/response';
-import { AxiosResponse } from 'axios';
+import type { FetchNotesResponse, Note, Params } from '../../types/note';
+import { cookies } from 'next/headers';
 
-async function cookieHeader(): Promise<string> {
-  const store = await cookies();
-  return store.getAll().map(c => `${c.name}=${c.value}`).join('; ');
+export async function checkSessionServer() {
+  const cookieStore = await cookies();
+  const {data}= await nextServer.get('/auth/session', {
+    headers: {
+
+      Cookie: cookieStore.toString(),
+    },
+  });
+  return data.success;
 }
 
-export async function getCurrentUserServer(): Promise<User> {
-  const { data } = await nextServer.get<User>('/users/me', {
-    headers: { Cookie: await cookieHeader() },
+export async function userInfoServer() {
+  const cookieStore = await cookies();
+  const {data} = await nextServer.get<User>('/users/me', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
   });
   return data;
 }
-export async function checkSessionServer(): Promise<AxiosResponse<SessionResponse>> {
-  const  data  = await nextServer.get<SessionResponse>('/auth/session', {
-    headers: {
-      Cookie: await cookieHeader(),
-      withCredentials: true,
-    },
+
+export async function fetchNotes(
+  searchValue: string = '',
+  page: number = 1,
+  tag?: string,
+  perPage: number = 12
+): Promise<FetchNotesResponse> {
+  const cookieStore = await cookies();
+  const params: Params = {
+    page,
+    perPage,
+    tag,
+  };
+
+  if (searchValue) {
+    params.search = searchValue;
+  }
+  const headers = {
+    Cookie: cookieStore.toString(),
+  };
+
+  const response = await nextServer.get<FetchNotesResponse>(`/notes`, {
+    params,
+    headers,
   });
-
-  return data
+  return response.data;
 }
-export async function refreshSessionServer(
-  refreshToken?: string
-): Promise<AxiosResponse<RefreshResult>> {
-  const body = refreshToken ? { refreshToken } : undefined;
 
-  const res = await nextServer.post<RefreshResult>('/auth/refresh', body, {
-    headers: {
-      Cookie: await cookieHeader(),
-      'Content-Type': 'application/json',
-    },
-    withCredentials: true,
-  });
-
-  return res;
-}
 export async function getNoteByIdServer(id: string): Promise<Note> {
-  const res = await nextServer.get<Note>(`/notes/${id}`, {
-    headers: { Cookie: await cookieHeader() },
+  const cookieStore = await cookies();
+  const response = await nextServer.get<Note>(`/notes/${id}`, {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
   });
-  return res.data;
+  return response.data;
 }

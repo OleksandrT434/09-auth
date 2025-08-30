@@ -1,11 +1,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import css from './ProfilePage.module.css';
-import {getCurrentUserServer}  from "@/lib/api/serverApi"
+import {userInfoServer}  from "@/lib/api/serverApi"
 import { Metadata } from 'next';
 
 const PageProfile = async () => {
-  const user = await getCurrentUserServer();
+  const user = await userInfoServer();
 
   return (
     <main className={css.mainContent}>
