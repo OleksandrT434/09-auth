@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 export default function getBaseUrl(): string {
 
   if (process.env.SITE_URL) {
@@ -15,9 +16,8 @@ export default function getBaseUrl(): string {
     return process.env.NEXT_PUBLIC_API_URL;
   }
   throw new Error('❌ Base URL is not defined in environment variables');
-
 }
 export const nextServer = axios.create({
-  baseURL : process.env.NEXT_PUBLIC_API_URL,
+  baseURL: getBaseUrl() + '/api',
   withCredentials: true,
 });
