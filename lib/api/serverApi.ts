@@ -39,7 +39,7 @@ export async function fetchNotesServer(
   return data;
 }
 
-export async function fetchNoteByIdServer(id: string): Promise<Note> {
+export async function fetchNoteById(id: string): Promise<Note> {
   const { data } = await nextServer.get<Note>(`/notes/${id}`, {
     headers: { Cookie: cookieHeader() },
   });
