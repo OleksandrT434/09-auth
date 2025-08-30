@@ -6,7 +6,7 @@ const PUBLIC_ROUTES = ['/sign-in', '/sign-up'];
 const PRIVATE_ROUTES = ['/profile', '/notes'];
 
 export const config = {
-  matcher: ['/profile/:path*', '/notes/:path*', '/sign-in', '/sign-up'],
+  matcher: ['/profile', '/notes', '/sign-in', '/sign-up'],
 };
 
 export async function middleware(req: NextRequest) {
