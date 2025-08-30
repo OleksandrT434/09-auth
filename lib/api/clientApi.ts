@@ -1,6 +1,7 @@
 import { nextServer } from './api';
 import type { Note, NewNoteData, FetchNotesResponse } from '@/types/note';
 import type { User } from '@/types/user';
+import type { AuthResponse } from '@/types/response'
 
 export type UserRequest = {
   email: string;
@@ -16,13 +17,13 @@ type Params = {
 };
 
 // ---- AUTH ----
-export const registerUser = async (user: UserRequest): Promise<User> => {
-  const { data } = await nextServer.post<User>('/auth/register', user);
+export const registerUser = async (user: UserRequest): Promise<AuthResponse> => { 
+  const { data } = await nextServer.post<AuthResponse>('/auth/register', user); 
   return data;
 };
 
-export const loginUser = async (user: UserRequest): Promise<User> => {
-  const { data } = await nextServer.post<User>('/auth/login', user);
+export const loginUser = async (user: UserRequest): Promise<AuthResponse> => { 
+  const { data } = await nextServer.post<AuthResponse>('/auth/login', user); 
   return data;
 };
 
