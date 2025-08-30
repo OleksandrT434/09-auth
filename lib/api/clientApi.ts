@@ -1,67 +1,88 @@
-import { User, UserRequest } from '@/types/user';
-import { CheckSession } from '@/types/response';
-import { nextServer } from './api';
-import type { FetchNotesResponse, NewNoteData, Note } from '../../types/note';
+import { User } from "@/types/user";
+import { nextServer } from "./api";
+import { NewNoteData, Note } from "@/types/note";
 
-export const registration = async (user: UserRequest): Promise<User> => {
-  const {data}= await nextServer.post<User>(`/auth/register`, user);
+interface NotesHttpResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+}
+
+export type LoginRequest = {
+  email: string;
+  password: string;
+};
+
+export const userRegister = async (data: SignupRequest): Promise<User> => {
+  const res = await nextServer.post<User>("/auth/register", data);
+  return res.data;
+};
+
+export const login = async (data: LoginRequest): Promise<User> => {
+  const res = await nextServer.post<User>("/auth/login", data);
+  return res.data;
+};
+
+export const getMe = async (): Promise<User> => {
+  const { data } = await nextServer.get<User>("/users/me");
   return data;
 };
 
-export const login = async (user: UserRequest): Promise<User> => {
-  const {data}= await nextServer.post<User>(`/auth/login`, user);
-  return data;
+export const updateMe = async ({
+  username,
+  email,
+}: {
+  username: string;
+  email: string;
+}): Promise<User> => {
+  const res = await nextServer.patch<User>("/users/me", { username, email });
+  return res.data;
 };
 
-export const logout = async () => {
-  const {data}= await nextServer.post(`/auth/logout`);
-  return data.success;   
+export const logout = async (): Promise<void> => {
+  await nextServer.post("/auth/logout");
 };
 
-export async function checkSessionClient() {
-  const {data}= await nextServer.get<CheckSession>('/auth/session');
-  return data.success;
-}
+type CheckSessionResponse = { success: boolean };
 
-export async function userInfoClient() {
-  const {data} = await nextServer.get<User>('/users/me');
-  return data;
-}
+export const checkSession = async (): Promise<boolean> => {
+  const res = await nextServer.get<CheckSessionResponse>("/auth/session");
+  return res.data.success;
+};
 
-export async function updateUser(user: Partial<User>) {
-  const {data} = await nextServer.patch<User>('/users/me', user);
-  return data;
-}
+export const fetchNotes = async (
+  search: string,
+  page: number,
+  tag: string | undefined
+): Promise<NotesHttpResponse> => {
+  const params = {
+    ...(search && { search }),
+    tag,
+    page,
+    perPage: 12,
+  };
 
+  const response = await nextServer.get<NotesHttpResponse>("/notes", {
+    params,
+  });
+  return response.data;
+};
 
-// ---- NOTES ----
-export async function fetchNotes(
-  page = 1,
-  perPage = 12,
-  searchValue = '',
-  sortBy?: 'created' | 'updated',
-  tag?: string
-): Promise<FetchNotesResponse> {
-  const params: Record<string, string | number> = { page, perPage };
-  if (searchValue.trim()) params.search = searchValue.trim();
-  if (sortBy) params.sortBy = sortBy;
-  if (tag && tag !== 'All') params.tag = tag;
-
-  const { data } = await nextServer.get<FetchNotesResponse>('/notes', { params });
-  return data;
-}
-
-export const createNote = async (noteData: NewNoteData): Promise<Note> => {
-  const { data } = await nextServer.post<Note>('/notes', noteData);
-  return data;
+export const createNote = async (note: NewNoteData): Promise<Note> => {
+  const response = await nextServer.post<Note>("/notes", note);
+  return response.data;
 };
 
 export const deleteNote = async (id: string): Promise<Note> => {
-  const { data } = await nextServer.delete<Note>(`/notes/${id}`);
-  return data;
+  const response = await nextServer.delete<Note>(`/notes/${id}`);
+  return response.data;
 };
 
 export const fetchNoteById = async (id: string): Promise<Note> => {
-  const { data } = await nextServer.get<Note>(`/notes/${id}`);
-  return data;
+  const response = await nextServer.get<Note>(`/notes/${id}`);
+  return response.data;
 };

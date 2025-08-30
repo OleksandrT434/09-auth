@@ -1,12 +1,32 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import css from './ProfilePage.module.css';
-import {userInfoServer}  from "@/lib/api/serverApi"
-import { Metadata } from 'next';
+import css from "./ProfilePage.module.css";
+import Image from "next/image";
+import type { Metadata } from "next";
+import { getServerMe } from "@/lib/api/serverApi";
+import Link from "next/link";
 
-const PageProfile = async () => {
-  const user = await userInfoServer();
+export const metadata: Metadata = {
+  title: "Profile Page | NoteHub",
+  description: "Welcome to your profile.",
 
+  openGraph: {
+    title: "Profile Page | NoteHub",
+    description: "Welcome to your profile.",
+    url: "https://09-auth-nu-three.vercel.app/",
+    siteName: "My NoteHub App",
+    images: [
+      {
+        url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+        width: 700,
+        height: 700,
+        alt: "Your avatar",
+      },
+    ],
+  },
+};
+export const dynamic = "force-dynamic";
+
+export default async function Profile() {
+  const user = await getServerMe();
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
@@ -16,44 +36,24 @@ const PageProfile = async () => {
             Edit Profile
           </Link>
         </div>
-
         <div className={css.avatarWrapper}>
           <Image
-            src={user.avatar ?? "/default-avatar.png"}
+            src={
+              user.avatar && user.avatar.trim() !== ""
+                ? user.avatar
+                : "/default-avatar.png"
+            }
             alt="User Avatar"
             width={120}
             height={120}
             className={css.avatar}
           />
         </div>
-
         <div className={css.profileInfo}>
-          <p>Username: {user?.username}</p>
+          <p>Username: {user.username ?? user.email.split("@")[0]}</p>
           <p>Email: {user.email}</p>
         </div>
       </div>
     </main>
   );
-};
-
-export default PageProfile;
-
-
-export const metadata: Metadata = {
-        title: 'Profile - NoteHub',
-        description: 'Manage your profile on NoteHub',
-        openGraph: {
-            title: 'Profile - NoteHub',
-            description: 'Manage your profile on NoteHub',
-            url: 'https://notehub.com/profile',
-            images: [
-                {
-                    url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
-                    width: 1200,
-                    height: 630,
-                    alt: 'NoteHub Profile Page',
-                }
-            ]
-        },
-    }
- 
+}

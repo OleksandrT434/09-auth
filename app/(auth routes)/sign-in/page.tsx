@@ -1,35 +1,48 @@
-'use client';
+"use client";
 
-import css from './SignInPage.module.css';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { login } from '@/lib/api/clientApi';
-import { useAuthStore } from '@/lib/store/authStore';
-import { UserRequest } from '@/types/user';
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import css from "./SignInPage.module.css";
+import { login } from "@/lib/api/clientApi";
+import { LoginRequest, User } from "@/types/user";
+import { AxiosError } from "axios";
+import { useAuthStore } from "@/lib/store/authStore";
 
-export default function SignIn() {
+export type ApiError = AxiosError<{ error: string }>;
+
+export default function SignInPage() {
   const router = useRouter();
-  const [error, setError] = useState<string>('');
-  const setUser = useAuthStore((s) => s.setUser);
+  const setUser = useAuthStore((state) => state.setUser);
 
-  const handleSubmit = async (formData: FormData) => {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+    const data: LoginRequest = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    };
+
     try {
-      const newUser = Object.fromEntries(formData) as UserRequest;
-      const user = await login(newUser);
+      setLoading(true);
+      const user: User = await login(data);
       setUser(user);
-      router.push('/profile');
-    } catch (error) {
-      setError(
-        typeof error === 'object' && error !== null && 'message' in error
-          ? ((error as { message?: string }).message ?? 'Oops... some error')
-          : 'Oops... some error'
-      );
+      router.push("/profile");
+    } catch (err) {
+      const apiError = err as ApiError;
+      setError(apiError.response?.data?.error ?? "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <main className={css.mainContent}>
-      <form action={handleSubmit} className={css.form}>
+      <form className={css.form} onSubmit={handleSubmit}>
         <h1 className={css.formTitle}>Sign in</h1>
 
         <div className={css.formGroup}>
@@ -55,8 +68,8 @@ export default function SignIn() {
         </div>
 
         <div className={css.actions}>
-          <button type="submit" className={css.submitButton}>
-            Log in
+          <button type="submit" className={css.submitButton} disabled={loading}>
+            {loading ? "Logging in..." : "Log in"}
           </button>
         </div>
 

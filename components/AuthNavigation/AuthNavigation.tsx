@@ -6,9 +6,6 @@ import { useAuthStore } from '../../lib/store/authStore';
 import { logout } from '../../lib/api/clientApi';
 import { useRouter } from 'next/navigation';
 
-
-
-
 const AuthNavigation = () => {
   const { isAuthenticated, user, clearIsAuthenticated } = useAuthStore();
   const router = useRouter();
