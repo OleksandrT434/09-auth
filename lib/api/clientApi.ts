@@ -2,10 +2,7 @@ import { User } from "@/types/user";
 import { nextServer } from "./api";
 import { NewNoteData, Note } from "@/types/note";
 
-interface NotesResponse {
-  notes: Note[];
-  totalPages: number;
-}
+import {FetchNotesResponse} from '@/types/note'
 
 export interface SignupRequest {
   email: string;
@@ -59,7 +56,7 @@ export const fetchNotes = async (
   search: string,
   page: number,
   tag: string | undefined
-): Promise<NotesResponse> => {
+): Promise<FetchNotesResponse> => {
   const params = {
     ...(search && { search }),
     tag,
@@ -67,7 +64,7 @@ export const fetchNotes = async (
     perPage: 12,
   };
 
-  const response = await nextServer.get<NotesResponse>("/notes", {
+  const response = await nextServer.get<FetchNotesResponse>("/notes", {
     params,
   });
   return response.data;
