@@ -5,7 +5,6 @@ import type { User } from '@/types/user';
 export type UserRequest = {
   email: string;
   password: string;
-  avatar: string
 };
 
 type Params = {
