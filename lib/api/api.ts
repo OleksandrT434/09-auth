@@ -9,6 +9,6 @@ export default function getBaseUrl(): string {
 }
 
 export const nextServer = axios.create({
-  baseURL: getBaseUrl() + '/api',
+  baseURL: getBaseUrl() ,
   withCredentials: true,
 });
