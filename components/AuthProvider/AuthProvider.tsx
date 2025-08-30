@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { checkSessionClient } from '@/lib/api/clientApi'
+import { checkSessionClient, getUserInfo } from '@/lib/api/clientApi'
 import { useAuthStore } from '@/lib/store/authStore';
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -13,8 +13,9 @@ useEffect(() => {
     async function loadUser() {
       try {
         const session = await checkSessionClient();
-        if (session.authenticated && session.user) {
-          setAuth(session.user);
+        if (session.authenticated) {
+           const user = await getUserInfo()
+          setAuth(user);
         } else {
           clearAuth();
         }
@@ -24,13 +25,8 @@ useEffect(() => {
         setLoading(false);
       }
     }
-
     loadUser();
   }, [setAuth, clearAuth]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (loading) return <div>Loading...</div>;
   return <>{children}</>;

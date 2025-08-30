@@ -2,7 +2,8 @@ import { cookies } from 'next/headers';
 import { nextServer } from './api';
 import type { User } from '@/types/user';
 import type { Note } from '@/types/note';
-import type { RefreshResult } from '@/types/response';
+import type { RefreshResult, SessionResponse } from '@/types/response';
+import { AxiosResponse } from 'axios';
 
 async function cookieHeader(): Promise<string> {
   const store = await cookies();
@@ -15,23 +16,34 @@ export async function getCurrentUserServer(): Promise<User> {
   });
   return data;
 }
-export async function checkSessionServer(
+export async function checkSessionServer(): Promise<AxiosResponse<SessionResponse>> {
+  const  data  = await nextServer.get<SessionResponse>('/auth/session', {
+    headers: {
+      Cookie: await cookieHeader(),
+      withCredentials: true,
+    },
+  });
+
+  return data
+}
+export async function refreshSessionServer(
   refreshToken?: string
-): Promise<RefreshResult | null> {
+): Promise<AxiosResponse<RefreshResult>> {
   const body = refreshToken ? { refreshToken } : undefined;
 
-  const { data } = await nextServer.post<RefreshResult>('/auth/refresh', body, {
+  const res = await nextServer.post<RefreshResult>('/auth/refresh', body, {
     headers: {
       Cookie: await cookieHeader(),
       'Content-Type': 'application/json',
     },
+    withCredentials: true,
   });
 
-  return data?.accessToken ? data : null;
+  return res;
 }
 export async function getNoteByIdServer(id: string): Promise<Note> {
-  const { data } = await nextServer.get<Note>(`/notes/${id}`, {
+  const res = await nextServer.get<Note>(`/notes/${id}`, {
     headers: { Cookie: await cookieHeader() },
   });
-  return data;
+  return res.data;
 }

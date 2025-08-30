@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies as headerCookies } from 'next/headers';
-import { checkSessionServer } from '@/lib/api/serverApi';
+import { refreshSessionServer } from '@/lib/api/serverApi';
 
 const PUBLIC_ROUTES = ['/sign-in', '/sign-up'];
 const PRIVATE_ROUTES = ['/profile', '/notes'];
@@ -23,7 +23,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/', req.url));
   }
   if (!accessToken && refreshToken) {
-    const refreshed = await checkSessionServer(refreshToken);
+    const { data: refreshed } = await refreshSessionServer(refreshToken);
 
     if (refreshed?.accessToken) {
       const res = isPublic
