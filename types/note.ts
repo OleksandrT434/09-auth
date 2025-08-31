@@ -26,3 +26,15 @@ export type FetchNotesResponse = {
   notes: Note[];
   totalPages: number;
 };
+export interface FetchNotesParams{
+    tag?: string;
+    page?: number;
+    perPage?: number;
+    search?: string;
+}
+export interface NotesResponse{
+  data: Note[];
+  totalPages: number;
+  page: number;
+  perPage: number;
+}

@@ -1,7 +1,7 @@
 import css from "./ProfilePage.module.css";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { getServerMe } from "@/lib/api/serverApi";
+import { getServeMe } from "@/lib/api/serverApi";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function Profile() {
-  const user = await getServerMe();
+  const user = await getServeMe();
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>

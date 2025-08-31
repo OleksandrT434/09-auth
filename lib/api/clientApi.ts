@@ -2,45 +2,48 @@ import { User } from "@/types/user";
 import { nextServer } from "./api";
 import { NewNoteData, Note, FetchNotesResponse } from "@/types/note";
 
-export interface SignupRequest {
-  email: string;
-  password: string;
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+export interface RegisterRequest {
+    email: string;
+    password: string;
+}
+export interface CheckSessionRequest {
+    success: boolean;
+}
+export interface UpdateUserRequest {
+    username?: string;
+}
+export const register = async (data: RegisterRequest): Promise<User> => {
+    const res = await nextServer.post<User>("/auth/register", data);
+    return res.data;
+};
+export const login = async (data: LoginRequest): Promise<User> => {
+    const res = await nextServer.post<User>("auth/login", data);
+    return res.data;
+};
+export const logout = async (): Promise<void> => {
+    await nextServer.post("auth/logout");
+};
+
+export const checkSession = async (): Promise<boolean> => {
+    const res = await nextServer.get<CheckSessionRequest>("/auth/session");
+    return res.data.success;
 }
 
-export type LoginRequest = {
-  email: string;
-  password: string;
-};
-
-export const userRegister = async (data: SignupRequest): Promise<User> => {
-  const res = await nextServer.post<User>("/auth/register", data);
-  return res.data;
-};
-
-export const login = async (data: LoginRequest): Promise<User> => {
-  const res = await nextServer.post<User>("/auth/login", data);
-  return res.data;
-};
-
 export const getMe = async (): Promise<User> => {
-  const { data } = await nextServer.get<User>("/users/me");
-  return data;
+    const { data } = await nextServer.get<User>("users/me");
+    return data;
 };
 
-export const updateMe = async ({ username }: { username: string }): Promise<User> => {
-  const res = await nextServer.patch<User>("/users/me", { username });
-  return res.data;
-};
+export const updateMe = async (payload: UpdateUserRequest) => {
+    const res = await nextServer.patch<User>("/users/me", payload);
+    return res.data;
+}
 
-export const logout = async (): Promise<void> => {
-  await nextServer.post("/auth/logout");
-};
-
-export const checkSession = async (): Promise<User | null> => {
-  const res = await nextServer.get<User | "">("/auth/session");
-  if (!res.data || typeof res.data !== "object") return null;
-  return res.data as User;
-};
 
 export const fetchNotes = async (
   search: string,
