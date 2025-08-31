@@ -11,13 +11,17 @@ interface NotesHttpResponse {
 function cookieHeader() {
   return cookies().toString(); 
 }
-export async function checkServerSession(): Promise<User | null> {
-  const res = await nextServer.get<User | "">("/auth/session", {
-    headers: { Cookie: cookieHeader() },
+
+export const checkServerSession = async () => {
+  const cookieStore = await cookies();
+  const res = await nextServer.get('/auth/session', {
+    headers: {
+      Cookie: cookieStore.toString(),
+    },
   });
-  if (!res.data || typeof res.data !== "object") return null;
-  return res.data as User;
-}
+  return res;
+};
+
 
 export async function getServerMe(): Promise<User> {
   const { data } = await nextServer.get<User>("/users/me", {

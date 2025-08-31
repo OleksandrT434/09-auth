@@ -1,8 +1,6 @@
 import { User } from "@/types/user";
 import { nextServer } from "./api";
-import { NewNoteData, Note } from "@/types/note";
-
-import {FetchNotesResponse} from '@/types/note'
+import { NewNoteData, Note, FetchNotesResponse } from "@/types/note";
 
 export interface SignupRequest {
   email: string;
@@ -29,14 +27,8 @@ export const getMe = async (): Promise<User> => {
   return data;
 };
 
-export const updateMe = async ({
-  username,
-  email,
-}: {
-  username: string;
-  email: string;
-}): Promise<User> => {
-  const res = await nextServer.patch<User>("/users/me", { username, email });
+export const updateMe = async ({ username }: { username: string }): Promise<User> => {
+  const res = await nextServer.patch<User>("/users/me", { username });
   return res.data;
 };
 
@@ -44,13 +36,11 @@ export const logout = async (): Promise<void> => {
   await nextServer.post("/auth/logout");
 };
 
-
 export const checkSession = async (): Promise<User | null> => {
   const res = await nextServer.get<User | "">("/auth/session");
   if (!res.data || typeof res.data !== "object") return null;
   return res.data as User;
 };
-
 
 export const fetchNotes = async (
   search: string,
@@ -64,9 +54,7 @@ export const fetchNotes = async (
     perPage: 12,
   };
 
-  const response = await nextServer.get<FetchNotesResponse>("/notes", {
-    params,
-  });
+  const response = await nextServer.get<FetchNotesResponse>("/notes", { params });
   return response.data;
 };
 
@@ -80,7 +68,7 @@ export const deleteNote = async (id: string): Promise<Note> => {
   return response.data;
 };
 
-export async function fetchNoteById (id: string | number): Promise<Note> {
-  const response = await nextServer.get(`/notes/${id}`);
+export async function fetchNoteById(id: string | number): Promise<Note> {
+  const response = await nextServer.get<Note>(`/notes/${id}`);
   return response.data;
-};
+}
